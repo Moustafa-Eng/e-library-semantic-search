@@ -1,0 +1,301 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+@prefix elib: <http://www.semanticweb.org/e-library#> .
+
+# Publishers
+elib:publisher1 rdf:type elib:Publisher ;
+    elib:organizationName "Academic Press" .
+
+elib:publisher2 rdf:type elib:Publisher ;
+    elib:organizationName "Springer" .
+
+elib:publisher3 rdf:type elib:Publisher ;
+    elib:organizationName "IEEE" .
+
+elib:publisher4 rdf:type elib:Publisher ;
+    elib:organizationName "ACM" .
+
+elib:publisher5 rdf:type elib:Publisher ;
+    elib:organizationName "Oxford University Press" .
+
+# Universities
+elib:university1 rdf:type elib:University ;
+    elib:organizationName "Stanford University" .
+
+elib:university2 rdf:type elib:University ;
+    elib:organizationName "Massachusetts Institute of Technology" .
+
+elib:university3 rdf:type elib:University ;
+    elib:organizationName "University of Cambridge" .
+
+# Research Institutions
+elib:institution1 rdf:type elib:ResearchInstitution ;
+    elib:organizationName "CERN" .
+
+elib:institution2 rdf:type elib:ResearchInstitution ;
+    elib:organizationName "Max Planck Institute" .
+
+# Conferences
+elib:conference1 rdf:type elib:Conference ;
+    rdfs:label "International Conference on Semantic Web" .
+
+elib:conference2 rdf:type elib:Conference ;
+    rdfs:label "ACM Conference on Computer and Communications Security" .
+
+elib:conference3 rdf:type elib:Conference ;
+    rdfs:label "International Conference on Machine Learning" .
+
+# People (Authors, Researchers)
+elib:person1 rdf:type elib:Author, elib:Researcher ;
+    elib:name "John Smith" ;
+    elib:email "john.smith@example.org" ;
+    elib:affiliatedWith elib:university1 .
+
+elib:person2 rdf:type elib:Author, elib:Researcher ;
+    elib:name "Maria Garcia" ;
+    elib:email "maria.garcia@example.org" ;
+    elib:affiliatedWith elib:university2 .
+
+elib:person3 rdf:type elib:Author, elib:Researcher ;
+    elib:name "David Chen" ;
+    elib:email "david.chen@example.org" ;
+    elib:affiliatedWith elib:institution1 .
+
+elib:person4 rdf:type elib:Author, elib:Editor ;
+    elib:name "Sarah Johnson" ;
+    elib:email "sarah.johnson@example.org" ;
+    elib:affiliatedWith elib:university3 .
+
+elib:person5 rdf:type elib:Author, elib:Researcher ;
+    elib:name "Michael Brown" ;
+    elib:email "michael.brown@example.org" ;
+    elib:affiliatedWith elib:institution2 .
+
+# Subjects
+elib:subject1 rdf:type elib:ComputerScience ;
+    elib:subjectName "Artificial Intelligence" ;
+    elib:subjectDescription "The study of intelligent agents and machine learning" .
+
+elib:subject2 rdf:type elib:ComputerScience ;
+    elib:subjectName "Semantic Web" ;
+    elib:subjectDescription "Extension of the World Wide Web through standards by the W3C" .
+
+elib:subject3 rdf:type elib:ComputerScience ;
+    elib:subjectName "Information Retrieval" ;
+    elib:subjectDescription "The science of searching for information in documents and databases" .
+
+elib:subject4 rdf:type elib:Mathematics ;
+    elib:subjectName "Graph Theory" ;
+    elib:subjectDescription "The study of graphs, mathematical structures used to model pairwise relations between objects" .
+
+elib:subject5 rdf:type elib:Physics ;
+    elib:subjectName "Quantum Computing" ;
+    elib:subjectDescription "Computing using quantum-mechanical phenomena" .
+
+# Books
+elib:book1 rdf:type elib:Book ;
+    elib:title "Introduction to the Semantic Web and Semantic Web Services" ;
+    elib:abstract "This book provides an introduction to the Semantic Web and its applications in various domains." ;
+    elib:publicationDate "2020-05-15"^^xsd:date ;
+    elib:isbn "978-1-23456-789-0" ;
+    elib:pageCount 320 ;
+    elib:language "English" ;
+    elib:keywords "semantic web, ontology, RDF, OWL, SPARQL" ;
+    elib:hasAuthor elib:person1 ;
+    elib:hasAuthor elib:person2 ;
+    elib:publishedBy elib:publisher1 ;
+    elib:hasTopic elib:subject2 .
+
+elib:book2 rdf:type elib:Book ;
+    elib:title "Artificial Intelligence: A Modern Approach" ;
+    elib:abstract "The leading textbook in Artificial Intelligence, used in over 1400 universities in over 120 countries." ;
+    elib:publicationDate "2021-01-20"^^xsd:date ;
+    elib:isbn "978-0-13-604259-4" ;
+    elib:pageCount 1152 ;
+    elib:language "English" ;
+    elib:keywords "artificial intelligence, machine learning, neural networks" ;
+    elib:hasAuthor elib:person3 ;
+    elib:publishedBy elib:publisher2 ;
+    elib:hasTopic elib:subject1 .
+
+elib:book3 rdf:type elib:Book ;
+    elib:title "Information Retrieval: Algorithms and Heuristics" ;
+    elib:abstract "This book provides a modern approach to information retrieval from a computer science perspective." ;
+    elib:publicationDate "2019-07-10"^^xsd:date ;
+    elib:isbn "978-1-4020-3003-1" ;
+    elib:pageCount 352 ;
+    elib:language "English" ;
+    elib:keywords "information retrieval, search engines, text mining" ;
+    elib:hasAuthor elib:person4 ;
+    elib:publishedBy elib:publisher5 ;
+    elib:hasTopic elib:subject3 .
+
+# Journals
+elib:journal1 rdf:type elib:Journal ;
+    elib:title "Journal of Web Semantics" ;
+    elib:issn "1570-8268" ;
+    elib:publishedBy elib:publisher2 .
+
+elib:journal2 rdf:type elib:Journal ;
+    elib:title "IEEE Transactions on Knowledge and Data Engineering" ;
+    elib:issn "1041-4347" ;
+    elib:publishedBy elib:publisher3 .
+
+elib:journal3 rdf:type elib:Journal ;
+    elib:title "ACM Transactions on Information Systems" ;
+    elib:issn "1046-8188" ;
+    elib:publishedBy elib:publisher4 .
+
+# Journal Articles
+elib:article1 rdf:type elib:JournalArticle ;
+    elib:title "Ontology-Based Information Retrieval for Digital Libraries" ;
+    elib:abstract "This paper presents an ontology-based approach to information retrieval in digital libraries." ;
+    elib:publicationDate "2022-03-15"^^xsd:date ;
+    elib:doi "10.1234/jws.2022.123" ;
+    elib:pageCount 18 ;
+    elib:language "English" ;
+    elib:keywords "ontology, information retrieval, digital libraries, semantic search" ;
+    elib:hasAuthor elib:person1 ;
+    elib:hasAuthor elib:person4 ;
+    elib:publishedBy elib:publisher2 ;
+    elib:hasTopic elib:subject2 ;
+    elib:hasTopic elib:subject3 ;
+    elib:partOf elib:journal1 .
+
+elib:article2 rdf:type elib:JournalArticle ;
+    elib:title "A Survey of Graph Neural Networks for Knowledge Graph Completion" ;
+    elib:abstract "This survey examines the application of graph neural networks to the problem of knowledge graph completion." ;
+    elib:publicationDate "2023-01-10"^^xsd:date ;
+    elib:doi "10.1109/TKDE.2023.456" ;
+    elib:pageCount 15 ;
+    elib:language "English" ;
+    elib:keywords "graph neural networks, knowledge graphs, link prediction" ;
+    elib:hasAuthor elib:person2 ;
+    elib:hasAuthor elib:person5 ;
+    elib:publishedBy elib:publisher3 ;
+    elib:hasTopic elib:subject1 ;
+    elib:hasTopic elib:subject4 ;
+    elib:partOf elib:journal2 .
+
+elib:article3 rdf:type elib:JournalArticle ;
+    elib:title "Semantic Search in E-Libraries: Challenges and Opportunities" ;
+    elib:abstract "This article discusses the challenges and opportunities in implementing semantic search in electronic libraries." ;
+    elib:publicationDate "2022-09-05"^^xsd:date ;
+    elib:doi "10.1145/tois.2022.789" ;
+    elib:pageCount 22 ;
+    elib:language "English" ;
+    elib:keywords "semantic search, e-libraries, information retrieval, user experience" ;
+    elib:hasAuthor elib:person3 ;
+    elib:hasAuthor elib:person4 ;
+    elib:publishedBy elib:publisher4 ;
+    elib:hasTopic elib:subject2 ;
+    elib:hasTopic elib:subject3 ;
+    elib:partOf elib:journal3 .
+
+# Conference Papers
+elib:paper1 rdf:type elib:ConferencePaper ;
+    elib:title "SPARQL-Based Semantic Search for Academic Resources" ;
+    elib:abstract "This paper presents a SPARQL-based approach to semantic search for academic resources in digital libraries." ;
+    elib:publicationDate "2023-05-20"^^xsd:date ;
+    elib:doi "10.1145/3123456.3123457" ;
+    elib:pageCount 10 ;
+    elib:language "English" ;
+    elib:keywords "SPARQL, semantic search, academic resources, RDF" ;
+    elib:hasAuthor elib:person1 ;
+    elib:hasAuthor elib:person3 ;
+    elib:publishedBy elib:publisher4 ;
+    elib:hasTopic elib:subject2 ;
+    elib:hasTopic elib:subject3 ;
+    elib:presentedAt elib:conference1 .
+
+elib:paper2 rdf:type elib:ConferencePaper ;
+    elib:title "Quantum Algorithms for Knowledge Graph Embedding" ;
+    elib:abstract "This paper explores the application of quantum computing algorithms to knowledge graph embedding problems." ;
+    elib:publicationDate "2023-07-15"^^xsd:date ;
+    elib:doi "10.1109/conf.2023.123" ;
+    elib:pageCount 8 ;
+    elib:language "English" ;
+    elib:keywords "quantum computing, knowledge graphs, graph embedding" ;
+    elib:hasAuthor elib:person5 ;
+    elib:publishedBy elib:publisher3 ;
+    elib:hasTopic elib:subject1 ;
+    elib:hasTopic elib:subject5 ;
+    elib:presentedAt elib:conference3 .
+
+# Theses
+elib:thesis1 rdf:type elib:DoctoralThesis ;
+    elib:title "Ontology-Driven Information Retrieval for Academic Digital Libraries" ;
+    elib:abstract "This thesis investigates the application of ontologies to improve information retrieval in academic digital libraries." ;
+    elib:publicationDate "2021-06-30"^^xsd:date ;
+    elib:doi "10.5678/thesis.2021.123" ;
+    elib:pageCount 210 ;
+    elib:language "English" ;
+    elib:keywords "ontology, information retrieval, digital libraries, semantic search, academic resources" ;
+    elib:hasAuthor elib:person2 ;
+    elib:publishedBy elib:university2 ;
+    elib:hasTopic elib:subject2 ;
+    elib:hasTopic elib:subject3 ;
+    elib:supervisedBy elib:person4 .
+
+elib:thesis2 rdf:type elib:MastersThesis ;
+    elib:title "Graph-Based Approaches to Semantic Search in Scientific Literature" ;
+    elib:abstract "This thesis explores graph-based approaches to semantic search in scientific literature databases." ;
+    elib:publicationDate "2022-05-15"^^xsd:date ;
+    elib:doi "10.5678/thesis.2022.456" ;
+    elib:pageCount 120 ;
+    elib:language "English" ;
+    elib:keywords "graph theory, semantic search, scientific literature, information retrieval" ;
+    elib:hasAuthor elib:person3 ;
+    elib:publishedBy elib:university1 ;
+    elib:hasTopic elib:subject3 ;
+    elib:hasTopic elib:subject4 ;
+    elib:supervisedBy elib:person1 .
+
+# Technical Reports
+elib:report1 rdf:type elib:TechnicalReport ;
+    elib:title "Benchmarking Semantic Search Systems for Academic Resources" ;
+    elib:abstract "This technical report presents a comprehensive benchmarking of semantic search systems for academic resources." ;
+    elib:publicationDate "2023-02-10"^^xsd:date ;
+    elib:doi "10.5678/tr.2023.123" ;
+    elib:pageCount 45 ;
+    elib:language "English" ;
+    elib:keywords "benchmarking, semantic search, academic resources, evaluation metrics" ;
+    elib:hasAuthor elib:person1 ;
+    elib:hasAuthor elib:person5 ;
+    elib:publishedBy elib:institution2 ;
+    elib:hasTopic elib:subject2 ;
+    elib:hasTopic elib:subject3 .
+
+# Relationships between resources
+elib:article1 elib:cites elib:book1 .
+elib:article1 elib:cites elib:book3 .
+elib:article2 elib:cites elib:book2 .
+elib:article3 elib:cites elib:article1 .
+elib:article3 elib:cites elib:book1 .
+elib:paper1 elib:cites elib:article1 .
+elib:paper1 elib:cites elib:article3 .
+elib:paper2 elib:cites elib:article2 .
+elib:thesis1 elib:cites elib:book1 .
+elib:thesis1 elib:cites elib:book3 .
+elib:thesis1 elib:cites elib:article1 .
+elib:thesis2 elib:cites elib:article3 .
+elib:thesis2 elib:cites elib:paper1 .
+elib:report1 elib:cites elib:paper1 .
+elib:report1 elib:cites elib:thesis1 .
+
+# Semantic relationships
+elib:book1 elib:relatedTo elib:book3 .
+elib:book1 elib:relatedTo elib:article1 .
+elib:book1 elib:relatedTo elib:article3 .
+elib:book2 elib:relatedTo elib:article2 .
+elib:book3 elib:relatedTo elib:article3 .
+elib:article1 elib:relatedTo elib:article3 .
+elib:article1 elib:relatedTo elib:paper1 .
+elib:article2 elib:relatedTo elib:paper2 .
+elib:article3 elib:relatedTo elib:paper1 .
+elib:paper1 elib:relatedTo elib:thesis1 .
+elib:paper1 elib:relatedTo elib:thesis2 .
+elib:paper1 elib:relatedTo elib:report1 .

@@ -1,0 +1,302 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns="http://www.semanticweb.org/e-library#"
+     xml:base="http://www.semanticweb.org/e-library"
+     xmlns:dc="http://purl.org/dc/elements/1.1/"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:xml="http://www.w3.org/XML/1998/namespace"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+    <owl:Ontology rdf:about="http://www.semanticweb.org/e-library">
+        <dc:creator>E-Library Semantic Search Project</dc:creator>
+        <dc:description>An ontology for academic resources in an E-Library system</dc:description>
+        <rdfs:comment>This ontology models academic resources and their relationships for semantic search capabilities</rdfs:comment>
+    </owl:Ontology>
+    
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Object Properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    <!-- http://www.semanticweb.org/e-library#affiliatedWith -->
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/e-library#affiliatedWith">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/e-library#Person"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/e-library#Organization"/>
+        <rdfs:comment>Represents the affiliation of a person with an organization</rdfs:comment>
+        <rdfs:label>affiliated with</rdfs:label>
+    </owl:ObjectProperty>
+    
+    <!-- http://www.semanticweb.org/e-library#cites -->
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/e-library#cites">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/e-library#AcademicResource"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/e-library#AcademicResource"/>
+        <rdfs:comment>Represents citation relationships between academic resources</rdfs:comment>
+        <rdfs:label>cites</rdfs:label>
+    </owl:ObjectProperty>
+    
+    <!-- http://www.semanticweb.org/e-library#hasAuthor -->
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/e-library#hasAuthor">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/e-library#AcademicResource"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/e-library#Person"/>
+        <rdfs:comment>Links an academic resource to its author(s)</rdfs:comment>
+        <rdfs:label>has author</rdfs:label>
+    </owl:ObjectProperty>
+    
+    <!-- http://www.semanticweb.org/e-library#hasEditor -->
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/e-library#hasEditor">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/e-library#AcademicResource"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/e-library#Person"/>
+        <rdfs:comment>Links an academic resource to its editor(s)</rdfs:comment>
+        <rdfs:label>has editor</rdfs:label>
+    </owl:ObjectProperty>
+    
+    <!-- http://www.semanticweb.org/e-library#hasTopic -->
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/e-library#hasTopic">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/e-library#AcademicResource"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/e-library#Subject"/>
+        <rdfs:comment>Links an academic resource to its subject(s)</rdfs:comment>
+        <rdfs:label>has topic</rdfs:label>
+    </owl:ObjectProperty>
+    
+    <!-- http://www.semanticweb.org/e-library#partOf -->
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/e-library#partOf">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/e-library#JournalArticle"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/e-library#Journal"/>
+        <rdfs:comment>Indicates that a journal article is part of a journal</rdfs:comment>
+        <rdfs:label>part of</rdfs:label>
+    </owl:ObjectProperty>
+    
+    <!-- http://www.semanticweb.org/e-library#presentedAt -->
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/e-library#presentedAt">
+        <rdfs:domain>
+            <owl:Class>
+                <owl:unionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://www.semanticweb.org/e-library#ConferenceArticle"/>
+                    <rdf:Description rdf:about="http://www.semanticweb.org/e-library#ConferencePaper"/>
+                </owl:unionOf>
+            </owl:Class>
+        </rdfs:domain>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/e-library#Conference"/>
+        <rdfs:comment>Indicates that a paper was presented at a conference</rdfs:comment>
+        <rdfs:label>presented at</rdfs:label>
+    </owl:ObjectProperty>
+    
+    <!-- http://www.semanticweb.org/e-library#publishedBy -->
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/e-library#publishedBy">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/e-library#AcademicResource"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/e-library#Publisher"/>
+        <rdfs:comment>Links an academic resource to its publisher</rdfs:comment>
+        <rdfs:label>published by</rdfs:label>
+    </owl:ObjectProperty>
+    
+    <!-- http://www.semanticweb.org/e-library#relatedTo -->
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/e-library#relatedTo">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#SymmetricProperty"/>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/e-library#AcademicResource"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/e-library#AcademicResource"/>
+        <rdfs:comment>Represents semantic relationships between academic resources</rdfs:comment>
+        <rdfs:label>related to</rdfs:label>
+    </owl:ObjectProperty>
+    
+    <!-- http://www.semanticweb.org/e-library#supervisedBy -->
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/e-library#supervisedBy">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/e-library#Thesis"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/e-library#Person"/>
+        <rdfs:comment>Links a thesis to its supervisor</rdfs:comment>
+        <rdfs:label>supervised by</rdfs:label>
+    </owl:ObjectProperty>
+    
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Data properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    <!-- http://www.semanticweb.org/e-library#abstract -->
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/e-library#abstract">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/e-library#AcademicResource"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:comment>The abstract or summary of an academic resource</rdfs:comment>
+        <rdfs:label>abstract</rdfs:label>
+    </owl:DatatypeProperty>
+    
+    <!-- http://www.semanticweb.org/e-library#doi -->
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/e-library#doi">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/e-library#AcademicResource"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:comment>The Digital Object Identifier of an academic resource</rdfs:comment>
+        <rdfs:label>DOI</rdfs:label>
+    </owl:DatatypeProperty>
+    
+    <!-- http://www.semanticweb.org/e-library#email -->
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/e-library#email">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/e-library#Person"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:comment>The email address of a person</rdfs:comment>
+        <rdfs:label>email</rdfs:label>
+    </owl:DatatypeProperty>
+    
+    <!-- http://www.semanticweb.org/e-library#isbn -->
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/e-library#isbn">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/e-library#Book"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:comment>The International Standard Book Number</rdfs:comment>
+        <rdfs:label>ISBN</rdfs:label>
+    </owl:DatatypeProperty>
+    
+    <!-- http://www.semanticweb.org/e-library#issn -->
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/e-library#issn">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/e-library#Journal"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:comment>The International Standard Serial Number</rdfs:comment>
+        <rdfs:label>ISSN</rdfs:label>
+    </owl:DatatypeProperty>
+    
+    <!-- http://www.semanticweb.org/e-library#keywords -->
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/e-library#keywords">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/e-library#AcademicResource"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:comment>Keywords associated with an academic resource</rdfs:comment>
+        <rdfs:label>keywords</rdfs:label>
+    </owl:DatatypeProperty>
+    
+    <!-- http://www.semanticweb.org/e-library#language -->
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/e-library#language">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/e-library#AcademicResource"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:comment>The language of an academic resource</rdfs:comment>
+        <rdfs:label>language</rdfs:label>
+    </owl:DatatypeProperty>
+    
+    <!-- http://www.semanticweb.org/e-library#name -->
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/e-library#name">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/e-library#Person"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:comment>The name of a person</rdfs:comment>
+        <rdfs:label>name</rdfs:label>
+    </owl:DatatypeProperty>
+    
+    <!-- http://www.semanticweb.org/e-library#organizationName -->
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/e-library#organizationName">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/e-library#Organization"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:comment>The name of an organization</rdfs:comment>
+        <rdfs:label>organization name</rdfs:label>
+    </owl:DatatypeProperty>
+    
+    <!-- http://www.semanticweb.org/e-library#pageCount -->
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/e-library#pageCount">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/e-library#AcademicResource"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+        <rdfs:comment>The number of pages in an academic resource</rdfs:comment>
+        <rdfs:label>page count</rdfs:label>
+    </owl:DatatypeProperty>
+    
+    <!-- http://www.semanticweb.org/e-library#publicationDate -->
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/e-library#publicationDate">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/e-library#AcademicResource"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#date"/>
+        <rdfs:comment>The publication date of an academic resource</rdfs:comment>
+        <rdfs:label>publication date</rdfs:label>
+    </owl:DatatypeProperty>
+    
+    <!-- http://www.semanticweb.org/e-library#subjectDescription -->
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/e-library#subjectDescription">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/e-library#Subject"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:comment>Description of a subject</rdfs:comment>
+        <rdfs:label>subject description</rdfs:label>
+    </owl:DatatypeProperty>
+    
+    <!-- http://www.semanticweb.org/e-library#subjectName -->
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/e-library#subjectName">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/e-library#Subject"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:comment>The name of a subject</rdfs:comment>
+        <rdfs:label>subject name</rdfs:label>
+    </owl:DatatypeProperty>
+    
+    <!-- http://www.semanticweb.org/e-library#title -->
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/e-library#title">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/e-library#AcademicResource"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:comment>The title of an academic resource</rdfs:comment>
+        <rdfs:label>title</rdfs:label>
+    </owl:DatatypeProperty>
+    
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Classes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    <!-- http://www.semanticweb.org/e-library#AcademicResource -->
+    <owl:Class rdf:about="http://www.semanticweb.org/e-library#AcademicResource">
+        <rdfs:comment>The top-level class for all academic resources</rdfs:comment>
+        <rdfs:label>Academic Resource</rdfs:label>
+    </owl:Class>
+    
+    <!-- http://www.semanticweb.org/e-library#Article -->
+    <owl:Class rdf:about="http://www.semanticweb.org/e-library#Article">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/e-library#AcademicResource"/>
+        <rdfs:comment>A scholarly article</rdfs:comment>
+        <rdfs:label>Article</rdfs:label>
+    </owl:Class>
+    
+    <!-- http://www.semanticweb.org/e-library#Author -->
+    <owl:Class rdf:about="http://www.semanticweb.org/e-library#Author">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/e-library#Person"/>
+        <rdfs:comment>A person who has authored academic resources</rdfs:comment>
+        <rdfs:label>Author</rdfs:label>
+    </owl:Class>
+    
+    <!-- http://www.semanticweb.org/e-library#Biology -->
+    <owl:Class rdf:about="http://www.semanticweb.org/e-library#Biology">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/e-library#Subject"/>
+        <rdfs:comment>The field of biology</rdfs:comment>
+        <rdfs:label>Biology</rdfs:label>
+    </owl:Class>
+    
+    <!-- http://www.semanticweb.org/e-library#Book -->
+    <owl:Class rdf:about="http://www.semanticweb.org/e-library#Book">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/e-library#AcademicResource"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/e-library#hasAuthor"/>
+                <owl:minQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:minQualifiedCardinality>
+                <owl:onClass rdf:resource="http://www.semanticweb.org/e-library#Person"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:comment>A published book</rdfs:comment>
+        <rdfs:label>Book</rdfs:label>
+    </owl:Class>
+    
+    <!-- http://www.semanticweb.org/e-library#Chemistry -->
+    <owl:Class rdf:about="http://www.semanticweb.org/e-library#Chemistry">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/e-library#Subject"/>
+        <rdfs:comment>The field of chemistry</rdfs:comment>
+        <rdfs:label>Chemistry</rdfs:label>
+    </owl:Class>
+    
+    <!-- http://www.semanticweb.org/e-library#ComputerScience -->
+    <owl:Class rdf:about="http://www.semanticweb.org/e-library#ComputerScience">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/e-library#Subject"/>
+        <rdfs:comment>The field of computer science</rdfs:comment>
+        <rdfs:label>Computer Science</rdfs:label>
+    </owl:Class>
+
+    <!-- http://www.semanticweb.org/e-library#Conference -->
+    <owl:Class rdf:about="http://www.semanticweb.org/e-library#Conference">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/e-library#Event"/>
+        <rdfs:comment>A conference event</rdfs:comment>
+        <rdfs:label>Conference</rdfs:label>
+    </owl:Class>
+
+</rdf:RDF>

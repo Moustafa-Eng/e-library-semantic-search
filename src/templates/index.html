@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Library Semantic Search</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            padding-top: 20px;
+            padding-bottom: 20px;
+        }
+        .header {
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e5e5e5;
+            margin-bottom: 30px;
+        }
+        .search-form {
+            margin-bottom: 30px;
+        }
+        .results-container {
+            margin-top: 20px;
+        }
+        .result-item {
+            margin-bottom: 15px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .result-title {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        .result-meta {
+            font-size: 0.9em;
+            color: #7f8c8d;
+        }
+        .result-abstract {
+            margin-top: 10px;
+        }
+        .loading {
+            text-align: center;
+            padding: 20px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>E-Library Semantic Search</h1>
+            <p class="lead">Search academic resources using semantic web technologies</p>
+        </div>
+
+        <div class="search-form">
+            <form id="searchForm">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <select class="form-select" id="searchType" required>
+                            <option value="" selected disabled>Select search type</option>
+                            <option value="title">Search by Title</option>
+                            <option value="author">Search by Author</option>
+                            <option value="subject">Search by Subject</option>
+                            <option value="keyword">Search by Keyword (Title/Abstract)</option>
+                            <option value="date_range">Search by Date Range</option>
+                            <option value="interdisciplinary">Find Interdisciplinary Resources</option>
+                            <option value="most_cited">Find Most Cited Resources</option>
+                            <option value="collaborating_authors">Find Collaborating Authors</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <input type="text" class="form-control" id="searchQuery" placeholder="Enter search query">
+                        <small id="queryHelp" class="form-text text-muted">For date range, use format: YYYY-MM-DD,YYYY-MM-DD</small>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-primary w-100">Search</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="loading" id="loading">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p>Searching...</p>
+        </div>
+
+        <div class="results-container" id="resultsContainer">
+            <h3>Search Results</h3>
+            <div id="results"></div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchForm = document.getElementById('searchForm');
+            const searchType = document.getElementById('searchType');
+            const searchQuery = document.getElementById('searchQuery');
+            const loading = document.getElementById('loading');
+            const resultsContainer = document.getElementById('resultsContainer');
+            const results = document.getElementById('results');
+            const queryHelp = document.getElementById('queryHelp');
+
+            function getResourceId(resource) {
+                if (!resource) return 'N/A';
+                if (typeof resource === 'string') {
+                    // Handle URI strings like http://www.semanticweb.org/e-library#resource_id
+                    if (resource.includes('#')) {
+                        return resource.split('#')[1]; // Return the part after #
+                    }
+                    // Handle cases where it's already an ID or last part of a path
+                    return resource.split('/').pop();
+                }
+                // Handle objects (unlikely in this case, but keep for robustness)
+                if (resource.id) return resource.id;
+                if (resource.uri) {
+                    const parts = resource.uri.split('/');
+                    return parts[parts.length - 1];
+                }
+                return resource.toString();
+            }
+
+            // Initially hide results container
+            resultsContainer.style.display = 'none';
+
+            // Update help text based on search type
+            searchType.addEventListener('change', function() {
+                switch(this.value) {
+                    case 'date_range':
+                        queryHelp.textContent = 'Use format: YYYY-MM-DD,YYYY-MM-DD (e.g., 2022-01-01,2023-12-31)';
+                        searchQuery.placeholder = 'e.g., 2022-01-01,2023-12-31';
+                        break;
+                    case 'interdisciplinary':
+                    case 'most_cited':
+                    case 'collaborating_authors':
+                        queryHelp.textContent = 'No query needed for this search type';
+                        searchQuery.placeholder = 'No input required';
+                        searchQuery.disabled = true;
+                        break;
+                    default:
+                        queryHelp.textContent = 'Enter search terms';
+                        searchQuery.placeholder = 'Enter search query';
+                        searchQuery.disabled = false;
+                }
+            });
+
+            searchForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                console.log("Form submission prevented, sending fetch request...");
+                // Show loading indicator
+                loading.style.display = 'block';
+                resultsContainer.style.display = 'none';
+                results.innerHTML = '';
+                
+                // Prepare form data
+                const formData = new FormData();
+                formData.append('search_type', searchType.value);
+                
+                // For special search types that don't need a query, use a placeholder
+                if (['interdisciplinary', 'most_cited', 'collaborating_authors'].includes(searchType.value)) {
+                    formData.append('query', 'all');
+                } else {
+                    formData.append('query', searchQuery.value);
+                }
+                
+                // Send search request
+                fetch('/search', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Hide loading indicator
+                    loading.style.display = 'none';
+                    resultsContainer.style.display = 'block';
+                    
+                    // Display results
+                    if (data.length === 0) {
+                        results.innerHTML = '<div class="alert alert-info">No results found</div>';
+                        return;
+                    }
+                    
+                    let html = '';
+                    
+                    switch(searchType.value) {
+                        case 'title':
+                            data.forEach(item => {
+                                html += `
+                                    <div class="result-item">
+                                        <div class="result-title">${item.title}</div>
+                                        <div class="result-meta">Type: ${item.type}</div>
+                                        <div class="result-meta">Resource: ${getResourceId(item.resource)}</div>
+                                        <div class="mt-2">
+                                            <button class="btn btn-sm btn-outline-primary recommend-btn" data-resource="${getResourceId(item.resource)}">Find Similar</button>
+                                            <button class="btn btn-sm btn-outline-secondary related-btn" data-resource="${getResourceId(item.resource)}">Find Related</button>
+                                            <button class="btn btn-sm btn-outline-info citing-btn" data-resource="${getResourceId(item.resource)}">Find Citing</button>
+                                        </div>
+                                    </div>
+                                `;
+                            });
+                            break;
+                        case 'author':
+                            data.forEach(item => {
+                                html += `
+                                    <div class="result-item">
+                                        <div class="result-title">${item.title}</div>
+                                        <div class="result-meta">Author: ${item.author}</div>
+                                        <div class="result-meta">Resource: ${getResourceId(item.resource)}</div>
+                                    </div>
+                                `;
+                            });
+                            break;
+                        case 'subject':
+                            data.forEach(item => {
+                                html += `
+                                    <div class="result-item">
+                                        <div class="result-title">${item.title}</div>
+                                        <div class="result-meta">Subject: ${item.subject}</div>
+                                        <div class="result-meta">Resource: ${getResourceId(item.resource)}</div>
+                                    </div>
+                                `;
+                            });
+                            break;
+                        case 'keyword':
+                            data.forEach(item => {
+                                html += `
+                                    <div class="result-item">
+                                        <div class="result-title">${item.title}</div>
+                                        <div class="result-abstract">${item.abstract}</div>
+                                        <div class="result-meta">Resource: ${getResourceId(item.resource)}</div>
+                                    </div>
+                                `;
+                            });
+                            break;
+                        case 'date_range':
+                            data.forEach(item => {
+                                html += `
+                                    <div class="result-item">
+                                        <div class="result-title">${item.title}</div>
+                                        <div class="result-meta">Publication Date: ${item.date}</div>
+                                        <div class="result-meta">Resource: ${getResourceId(item.resource)}</div>
+                                    </div>
+                                `;
+                            });
+                            break;
+                        case 'interdisciplinary':
+                            data.forEach(item => {
+                                html += `
+                                    <div class="result-item">
+                                        <div class="result-title">${item.title}</div>
+                                        <div class="result-meta">Topics: ${item.topic1}, ${item.topic2}</div>
+                                        <div class="result-meta">Resource: ${getResourceId(item.resource)}</div>
+                                    </div>
+                                `;
+                            });
+                            break;
+                        case 'most_cited':
+                            data.forEach(item => {
+                                html += `
+                                    <div class="result-item">
+                                        <div class="result-title">${item.title}</div>
+                                        <div class="result-meta">Citations: ${item.citations}</div>
+                                        <div class="result-meta">Resource: ${getResourceId(item.resource)}</div>
+                                    </div>
+                                `;
+                            });
+                            break;
+                        case 'collaborating_authors':
+                            data.forEach(item => {
+                                html += `
+                                    <div class="result-item">
+                                        <div class="result-title">Collaboration on: ${item.resource}</div>
+                                        <div class="result-meta">Authors: ${item.author1} and ${item.author2}</div>
+                                    </div>
+                                `;
+                            });
+                            break;
+                    }
+                    
+                    results.innerHTML = html;
+                    
+                    // Add event listeners for recommendation buttons
+                    document.querySelectorAll('.recommend-btn').forEach(btn => {
+                        btn.addEventListener('click', function() {
+                            const resourceId = this.getAttribute('data-resource');
+                            getRecommendations(resourceId);
+                        });
+                    });
+                    
+                    // Add event listeners for related resources buttons
+                    document.querySelectorAll('.related-btn').forEach(btn => {
+                        btn.addEventListener('click', function() {
+                            const resourceId = this.getAttribute('data-resource');
+                            getRelatedResources(resourceId);
+                        });
+                    });
+                    
+                    // Add event listeners for citing resources buttons
+                    document.querySelectorAll('.citing-btn').forEach(btn => {
+                        btn.addEventListener('click', function() {
+                            const resourceId = this.getAttribute('data-resource');
+                            getCitingResources(resourceId);
+                        });
+                    });
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    loading.style.display = 'none';
+                    resultsContainer.style.display = 'block';
+                    results.innerHTML = '<div class="alert alert-danger">An error occurred while searching</div>';
+                });
+            });
+            
+            // Function to get recommendations for a resource
+            function getRecommendations(resourceId) {
+                loading.style.display = 'block';
+                
+                fetch(`/recommend/${resourceId}`)
+                .then(response => response.json())
+                .then(data => {
+                    loading.style.display = 'none';
+                    
+                    let html = '<h4>Similar Resources</h4>';
+                    
+                    if (data.length === 0) {
+                        html += '<div class="alert alert-info">No similar resources found</div>';
+                    } else {
+                        data.forEach(item => {
+                            html += `
+                                <div class="result-item">
+                                    <div class="result-title">${item.title}</div>
+                                    <div class="result-meta">Relevance: ${item.relevance}</div>
+                                    <div class="result-meta">Resource: ${getResourceId(item.resource)}</div>
+                                </div>
+                            `;
+                        });
+                    }
+                    
+                    results.innerHTML = html;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    loading.style.display = 'none';
+                    results.innerHTML = '<div class="alert alert-danger">An error occurred while getting recommendations</div>';
+                });
+            }
+
+            // Function to get related resources for a resource
+            function getRelatedResources(resourceId) {
+                loading.style.display = 'block';
+                
+                fetch(`/related/${resourceId}`)
+                .then(response => response.json())
+                .then(data => {
+                    loading.style.display = 'none';
+                    
+                    let html = '<h4>Related Resources</h4>';    
+                    
+                    if (data.length === 0) {
+                        html += '<div class="alert alert-info">No related resources found</div>';
+                    } else {
+                        data.forEach(item => {
+                            html += `
+                                <div class="result-item">
+                                    <div class="result-title">${item.title}</div>
+                                    <div class="result-meta">Resource: ${getResourceId(item.resource)}</div>
+                                </div>
+                            `;
+                        });
+                    }   
+                    
+                    results.innerHTML = html;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    loading.style.display = 'none';
+                    results.innerHTML = '<div class="alert alert-danger">An error occurred while getting related resources</div>';
+                });
+            }
+
+            // Function to get citing resources for a resource
+            function getCitingResources(resourceId) {
+                loading.style.display = 'block';
+                
+                fetch(`/citing/${resourceId}`)
+                .then(response => response.json())
+                .then(data => {
+                    loading.style.display = 'none';
+                    
+                    let html = '<h4>Citing Resources</h4>';
+                    
+                    if (data.length === 0) {
+                        html += '<div class="alert alert-info">No citing resources found</div>';
+                    } else {
+                        data.forEach(item => {
+                            html += `
+                                <div class="result-item">
+                                    <div class="result-title">${item.title}</div>
+                                    <div class="result-meta">Resource: ${getResourceId(item.resource)}</div>
+                                </div>
+                            `;
+                        });
+                    }
+                    
+                    results.innerHTML = html;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    loading.style.display = 'none';
+                    results.innerHTML = '<div class="alert alert-danger">An error occurred while getting citing resources</div>';
+                });
+            }
+        });
+    </script>
+    

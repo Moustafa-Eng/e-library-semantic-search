@@ -1,0 +1,271 @@
+# SPARQL Queries for E-Library Semantic Search
+
+This file contains various SPARQL queries for semantic search functionality in the E-Library system.
+
+## Basic Search Queries
+
+### 1. Search resources by title keyword
+```sparql
+PREFIX elib: <http://www.semanticweb.org/e-library#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+
+SELECT ?resource ?title ?type
+WHERE {
+  ?resource elib:title ?title .
+  ?resource rdf:type ?type .
+  FILTER(CONTAINS(LCASE(?title), LCASE("semantic")))
+  FILTER(?type != owl:NamedIndividual)
+}
+```
+
+### 2. Search resources by author name
+```sparql
+PREFIX elib: <http://www.semanticweb.org/e-library#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+
+SELECT ?resource ?title ?authorName
+WHERE {
+  ?resource elib:title ?title .
+  ?resource elib:hasAuthor ?author .
+  ?author elib:name ?authorName .
+  FILTER(CONTAINS(LCASE(?authorName), LCASE("Smith")))
+}
+```
+
+### 3. Search resources by subject
+```sparql
+PREFIX elib: <http://www.semanticweb.org/e-library#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+
+SELECT ?resource ?title ?subjectName
+WHERE {
+  ?resource elib:title ?title .
+  ?resource elib:hasTopic ?subject .
+  ?subject elib:subjectName ?subjectName .
+  FILTER(CONTAINS(LCASE(?subjectName), LCASE("Semantic Web")))
+}
+```
+
+### 4. Search resources by publication date range
+```sparql
+PREFIX elib: <http://www.semanticweb.org/e-library#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+SELECT ?resource ?title ?date
+WHERE {
+  ?resource elib:title ?title .
+  ?resource elib:publicationDate ?date .
+  FILTER(?date >= "2022-01-01"^^xsd:date && ?date <= "2023-12-31"^^xsd:date)
+}
+ORDER BY DESC(?date)
+```
+
+## Advanced Semantic Queries
+
+### 5. Find resources related to a specific resource
+```sparql
+PREFIX elib: <http://www.semanticweb.org/e-library#>
+
+SELECT ?relatedResource ?relatedTitle
+WHERE {
+  elib:article1 elib:relatedTo ?relatedResource .
+  ?relatedResource elib:title ?relatedTitle .
+}
+```
+
+### 6. Find resources that cite a specific resource
+```sparql
+PREFIX elib: <http://www.semanticweb.org/e-library#>
+
+SELECT ?citingResource ?citingTitle
+WHERE {
+  ?citingResource elib:cites elib:book1 .
+  ?citingResource elib:title ?citingTitle .
+}
+```
+
+### 7. Find resources by topic hierarchy (resources on a topic and its subtopics)
+```sparql
+PREFIX elib: <http://www.semanticweb.org/e-library#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT ?resource ?title ?topicName
+WHERE {
+  ?resource elib:title ?title .
+  ?resource elib:hasTopic ?topic .
+  ?topic elib:subjectName ?topicName .
+  {
+    ?topic rdf:type elib:ComputerScience .
+  } UNION {
+    ?subTopic rdfs:subClassOf elib:ComputerScience .
+    ?topic rdf:type ?subTopic .
+  }
+}
+```
+
+### 8. Find resources with multiple topics (interdisciplinary)
+```sparql
+PREFIX elib: <http://www.semanticweb.org/e-library#>
+
+SELECT ?resource ?title ?topic1Name ?topic2Name
+WHERE {
+  ?resource elib:title ?title .
+  ?resource elib:hasTopic ?topic1 .
+  ?resource elib:hasTopic ?topic2 .
+  ?topic1 elib:subjectName ?topic1Name .
+  ?topic2 elib:subjectName ?topic2Name .
+  FILTER(?topic1 != ?topic2)
+}
+```
+
+### 9. Find authors who have collaborated
+```sparql
+PREFIX elib: <http://www.semanticweb.org/e-library#>
+
+SELECT DISTINCT ?author1Name ?author2Name ?resourceTitle
+WHERE {
+  ?resource elib:hasAuthor ?author1 .
+  ?resource elib:hasAuthor ?author2 .
+  ?resource elib:title ?resourceTitle .
+  ?author1 elib:name ?author1Name .
+  ?author2 elib:name ?author2Name .
+  FILTER(?author1 != ?author2 && ?author1Name < ?author2Name)
+}
+```
+
+## Inference-Based Queries
+
+### 10. Find all academic resources (including inferred subclasses)
+```sparql
+PREFIX elib: <http://www.semanticweb.org/e-library#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT ?resource ?title ?type
+WHERE {
+  ?resource rdf:type ?type .
+  ?type rdfs:subClassOf* elib:AcademicResource .
+  ?resource elib:title ?title .
+}
+```
+
+### 11. Find all people (including inferred subclasses)
+```sparql
+PREFIX elib: <http://www.semanticweb.org/e-library#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT ?person ?name ?type
+WHERE {
+  ?person rdf:type ?type .
+  ?type rdfs:subClassOf* elib:Person .
+  ?person elib:name ?name .
+}
+```
+
+### 12. Find resources with their complete type hierarchy
+```sparql
+PREFIX elib: <http://www.semanticweb.org/e-library#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT ?resource ?title ?type ?superType
+WHERE {
+  ?resource elib:title ?title .
+  ?resource rdf:type ?type .
+  ?type rdfs:subClassOf* ?superType .
+  FILTER(?superType != owl:Thing)
+}
+```
+
+## Complex Queries
+
+### 13. Find the most cited resources
+```sparql
+PREFIX elib: <http://www.semanticweb.org/e-library#>
+
+SELECT ?resource ?title (COUNT(?citing) as ?citationCount)
+WHERE {
+  ?citing elib:cites ?resource .
+  ?resource elib:title ?title .
+}
+GROUP BY ?resource ?title
+ORDER BY DESC(?citationCount)
+```
+
+### 14. Find resources by keyword in title or abstract
+```sparql
+PREFIX elib: <http://www.semanticweb.org/e-library#>
+
+SELECT ?resource ?title ?abstract
+WHERE {
+  ?resource elib:title ?title .
+  ?resource elib:abstract ?abstract .
+  FILTER(CONTAINS(LCASE(?title), LCASE("semantic")) || CONTAINS(LCASE(?abstract), LCASE("semantic")))
+}
+```
+
+### 15. Find authors with their publication count by type
+```sparql
+PREFIX elib: <http://www.semanticweb.org/e-library#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+
+SELECT ?authorName ?resourceType (COUNT(?resource) as ?count)
+WHERE {
+  ?resource elib:hasAuthor ?author .
+  ?author elib:name ?authorName .
+  ?resource rdf:type ?resourceType .
+  FILTER(?resourceType != owl:NamedIndividual)
+}
+GROUP BY ?authorName ?resourceType
+ORDER BY ?authorName ?resourceType
+```
+
+### 16. Find resources with their complete metadata
+```sparql
+PREFIX elib: <http://www.semanticweb.org/e-library#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+
+SELECT ?resource ?title ?abstract ?date ?type ?authorName ?publisherName
+WHERE {
+  ?resource elib:title ?title .
+  ?resource elib:abstract ?abstract .
+  ?resource elib:publicationDate ?date .
+  ?resource rdf:type ?type .
+  ?resource elib:hasAuthor ?author .
+  ?author elib:name ?authorName .
+  ?resource elib:publishedBy ?publisher .
+  ?publisher elib:organizationName ?publisherName .
+  FILTER(?type != owl:NamedIndividual)
+}
+```
+
+### 17. Recommendation query - find similar resources based on shared topics
+```sparql
+PREFIX elib: <http://www.semanticweb.org/e-library#>
+
+SELECT ?recommendedResource ?recommendedTitle (COUNT(?sharedTopic) as ?relevance)
+WHERE {
+  elib:article1 elib:hasTopic ?topic .
+  ?recommendedResource elib:hasTopic ?topic .
+  ?recommendedResource elib:title ?recommendedTitle .
+  FILTER(?recommendedResource != elib:article1)
+  BIND(?topic as ?sharedTopic)
+}
+GROUP BY ?recommendedResource ?recommendedTitle
+ORDER BY DESC(?relevance)
+```
+
+### 18. Find the research network - authors connected through collaborations
+```sparql
+PREFIX elib: <http://www.semanticweb.org/e-library#>
+
+SELECT DISTINCT ?author1Name ?author2Name
+WHERE {
+  ?resource elib:hasAuthor ?author1 .
+  ?resource elib:hasAuthor ?author2 .
+  ?author1 elib:name ?author1Name .
+  ?author2 elib:name ?author2Name .
+  FILTER(?author1 != ?author2 && ?author1Name < ?author2Name)
+}
+```
